@@ -1,0 +1,30 @@
+{
+  "name": "prp-node",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "pkg . && node post-build"
+  },
+  "author": "",
+  "license": "ISC",
+  "bin": {
+    "prp-node": "./src/app.js"
+  },
+  "pkg": {
+    "assets": [
+      "node_modules/playwright/browsers.json"
+    ],
+    "targets": [
+      "node16-macos-x64"
+    ],
+    "outputPath": "dist"
+  },
+  "dependencies": {
+    "fs-extra": "^10.0.0",
+    "minikin": "^1.0.27",
+    "playwright": "^1.12.2",
+    "yargs": "^17.0.1"
+  }
+}
