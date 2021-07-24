@@ -52,12 +52,10 @@ const command = {
     const server = await Server.default.server()
     const browser = await chromium.launch()
 
-    await fs.copy(args.input, `${args.output}/html`)
-
     server.routes({
-      [`GET ${options.serverPath}`]: () => Server.Response.fromFile(`${args.output}/html/index.html`),
-      [`GET ${options.serverPath}/data`]: () => Server.Response.fromFile(`${args.output}/data.json`),
-      "GET *": req => Server.Response.fromFile(`${args.output}/html${req.url}`)
+      [`GET ${options.serverPath}`]: () => Server.Response.fromFile(`${args.input}/index.html`),
+      [`GET ${options.serverPath}data`]: () => Server.Response.fromFile(`${args.output}/data.json`),
+      "GET *": req => Server.Response.fromFile(`${args.input}${req.url}`)
     })
 
     const page = await browser.newPage()
