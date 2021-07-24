@@ -11,7 +11,7 @@ const args =
   .scriptName('prp-node')
   .usage('$0 <cmd> [args]')
   .showHelpOnFail(false, "use --help for available options")
-  .command('pdf [template] [data] [output] [filename] [format]', '', yargs => {
+  .command('pdf [template] [data] [output] [filename] [format] [selector]', '', yargs => {
     yargs.positional('template', {
       type: 'string',
       describe: 'absolute path to the template folder',
@@ -34,6 +34,11 @@ const args =
       default: 'A4',
       describe: 'din format of the generated pdf',
     })
+    yargs.positional('selector', {
+      type: 'string',
+      default: 'body',
+      describe: 'css selector to wait for',
+    })
   })
   .help()
   .argv
@@ -45,7 +50,6 @@ const command = {
     const options = {
       serverPath: '/',
       value: 'created',
-      waitForSelector: 'the-app[ready-preview]',
       ...opts
     }
 
@@ -61,7 +65,7 @@ const command = {
     const page = await browser.newPage()
 
     await page.goto(`http://localhost:${server.port}${options.serverPath}}`)
-    await page.waitForSelector(options.waitForSelector)
+    await page.waitForSelector(args.selector)
 
     const content = await page.content()
 
