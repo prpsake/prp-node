@@ -57,15 +57,15 @@ const command = {
     const browser = await chromium.launch()
 
     server.routes({
-      [`GET ${options.serverPath}`]: () => Server.Response.fromFile(`${args.input}/index.html`),
-      [`GET ${options.serverPath}data`]: () => Server.Response.fromFile(`${args.output}/data.json`),
-      "GET *": req => Server.Response.fromFile(`${args.input}${req.url}`)
+      [`GET ${options.serverPath}`]: () => Server.Response.fromFile(`${args.template}/index.html`),
+      [`GET ${options.serverPath}data`]: () => Server.Response.fromFile(args.data, null, null),
+      "GET *": req => Server.Response.fromFile(`${args.template}${req.url}`)
     })
 
     const page = await browser.newPage()
 
-    await page.goto(`http://localhost:${server.port}${options.serverPath}}`)
-    await page.waitForSelector(args.selector)
+    await page.goto(`http://localhost:${server.port}${options.serverPath}`)
+    await page.waitForSelector(args.selector, { state: 'attached', timeout: 5000 })
 
     const content = await page.content()
 
