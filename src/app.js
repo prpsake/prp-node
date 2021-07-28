@@ -183,12 +183,12 @@ const command = {
 ;(async () => {
   try {
     const output = await command[args._[0]](args)
-
     console.log(output)
-    process.exit()
-  
+ 
   } catch(e) {
     console.log(e)
+
+  } finally {
     process.exit()
   }
 })()
