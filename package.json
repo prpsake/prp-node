@@ -3,10 +3,7 @@
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "pkg . && node post-build"
-  },
+  "type": "module",
   "author": "",
   "license": "ISC",
   "bin": {
@@ -26,5 +23,17 @@
     "minikin": "^1.0.27",
     "playwright": "^1.12.2",
     "yargs": "^17.0.1"
+  },
+  "devDependencies": {
+    "ava": "^3.15.0",
+    "esm": "^3.2.25",
+    "execa": "^5.1.1",
+    "nyc": "^15.1.0",
+    "pkg": "^5.3.1",
+    "sinon": "^11.1.2"
+  },
+  "scripts": {
+    "test": "ava src/app.spec.js",
+    "build": "pkg . && node post-build"
   }
 }
