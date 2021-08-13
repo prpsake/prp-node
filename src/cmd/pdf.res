@@ -1,3 +1,18 @@
+type args = {
+  template: string,
+  data: string,
+  output: string,
+  filename: string,
+  format: string,
+  // html: bool,
+  fonts: string,
+  images: string,
+  selector: string,
+  host: string,
+  path: string,
+}
+
+
 type page = {
   goto: string => Promise.t<unit>
 }
@@ -26,9 +41,18 @@ external chromium: () => Promise.t<browser> = "chromium"
 
 
 
-let blub = outputFile
-let blah = joinPath
-let meh = chromium
+open Promise
+
+
+
+let pdf =
+  (args: args) =>
+  Server.serve((. fromFile) => {
+    let templatePath = joinPath([args.template, "index.html"])
+    {
+      "GET /": templatePath
+    }
+  })
 
 // import { outputFile } from 'fs-extra'
 // import { join as joinPath } from 'path'

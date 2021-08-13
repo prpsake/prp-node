@@ -17,8 +17,13 @@ function copyDir(src, dest) {
               }));
 }
 
+function buildUrl(host, path, port) {
+  return "" + host + ":" + port + path;
+}
+
 export {
   copyDir ,
+  buildUrl ,
   
 }
 /* fs-extra Not a pure module */

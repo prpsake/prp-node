@@ -2,19 +2,19 @@ rescript = 1
 g_finger := /Users/jerome/Projects/PRP/prp-node/node_modules/@ryyppy/rescript-promise/lib/ocaml/install.stamp
 rule astj
   command = /Users/jerome/Projects/PRP/prp-node/node_modules/rescript/darwin/bsc.exe  -bs-v 9.1.4  -absname -bs-ast -o $out $i
-o src/server.ast : astj ../../src/server.res
+o src/Server.ast : astj ../../src/Server.res
 rule deps
-  command = /Users/jerome/Projects/PRP/prp-node/node_modules/rescript/darwin/bsb_helper.exe -hash dd58a114df7a2fc2032a207a7af83ed5 $in
+  command = /Users/jerome/Projects/PRP/prp-node/node_modules/rescript/darwin/bsb_helper.exe -hash d443e7e3fe3caae222dfdbeb3578758c $in
   restat = 1
-o src/server.d : deps src/server.ast
+o src/Server.d : deps src/Server.ast
 rule mij
   command = /Users/jerome/Projects/PRP/prp-node/node_modules/rescript/darwin/bsc.exe -I src/cmd -I src -I /Users/jerome/Projects/PRP/prp-node/node_modules/@ryyppy/rescript-promise/lib/ocaml   -bs-package-name prp-node -bs-package-output es6:$in_d:.bs.js -bs-v $g_finger $i
   dyndep = 1
   restat = 1
-o src/server.cmj src/server.cmi ../../src/server.bs.js : mij src/server.ast
-o src/helpers.ast : astj ../../src/helpers.res
-o src/helpers.d : deps src/helpers.ast
-o src/helpers.cmj src/helpers.cmi ../../src/helpers.bs.js : mij src/helpers.ast
-o src/cmd/pdf.ast : astj ../../src/cmd/pdf.res
-o src/cmd/pdf.d : deps src/cmd/pdf.ast
-o src/cmd/pdf.cmj src/cmd/pdf.cmi ../../src/cmd/pdf.bs.js : mij src/cmd/pdf.ast
+o src/Server.cmj src/Server.cmi ../../src/Server.bs.js : mij src/Server.ast
+o src/Helpers.ast : astj ../../src/Helpers.res
+o src/Helpers.d : deps src/Helpers.ast
+o src/Helpers.cmj src/Helpers.cmi ../../src/Helpers.bs.js : mij src/Helpers.ast
+o src/cmd/PDF.ast : astj ../../src/cmd/PDF.res
+o src/cmd/PDF.d : deps src/cmd/PDF.ast
+o src/cmd/PDF.cmj src/cmd/PDF.cmi ../../src/cmd/PDF.bs.js : mij src/cmd/PDF.ast
