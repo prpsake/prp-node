@@ -191,37 +191,3 @@ let pdf =
       _ => "success"->resolve
     )
   )
-
-
-//   // output optional html
-//   if (html) {
-
-//     // resolve paths
-//     const outputHtmlPath = joinPath(args.output, 'html')
-
-
-
-//     // output rendered html file
-//     const content = await page.content()
-//     await outputFile(
-//       joinPath(outputHtmlPath, 'index.html'), 
-//       content
-//     )
-    
-
-
-//     // copy optional assets
-//     if (args.fonts) {
-//       copyDir(
-//         joinPath(args.template, args.fonts), 
-//         joinPath(outputHtmlPath, args.fonts)
-//       )
-//     }
-
-//     if (args.images) {
-//       copyDir(
-//         joinPath(args.template, args.images), 
-//         joinPath(outputHtmlPath, args.images)
-//       )
-//     }
-//   }
