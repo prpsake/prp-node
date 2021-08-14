@@ -5,7 +5,8 @@ import * as Minikin from "minikin";
 function serve(fn) {
   return Minikin.default.default.server().then(function (server) {
               var routes = fn(Minikin.Response.fromFile);
-              return Promise.resolve((server.routes(routes), server));
+              server.routes(routes);
+              return Promise.resolve(server);
             });
 }
 

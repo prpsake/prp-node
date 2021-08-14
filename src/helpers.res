@@ -1,7 +1,8 @@
 /* Helpers */
 
 @module("fs-extra") 
-external copy: string => string => Promise.t<unit> = "copy"
+external copy
+: string => string => Promise.t<unit> = "copy"
 
 
 

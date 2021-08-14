@@ -1,25 +1,35 @@
 /* Server */
 
+type t
+
+
+
+type routes = Js.Dict.t<unit => t>
+
+
+
 type server = {
-  port: string,
-  routes: (. {}) => unit
+  port: int,
+  routes: (. routes) => unit
 }
 
 
 
-type fn = string => unit
+type fn = ((. string) => t) => routes
 
 
 
 @module("minikin")
 @scope(("default", "default")) 
-external run: () => Promise.t<server> = "server"
+external run
+: () => Promise.t<server> = "server"
 
 
 
 @module("minikin")
 @scope("Response")
-external fromFile: (. string) => () = "fromFile"
+external fromFile
+: (. string) => t = "fromFile"
 
 
 
@@ -34,6 +44,6 @@ let serve =
     server => {
       let routes = fn(. fromFile)
       server.routes(. routes)
-      server
-    }->resolve
+      server->resolve
+    }
   )

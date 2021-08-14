@@ -2,29 +2,71 @@
 
 import * as Path from "path";
 import * as Server from "../Server.bs.js";
-import * as FsExtra from "fs-extra";
+import * as Helpers from "../Helpers.bs.js";
 import * as Playwright from "playwright";
-import * as Caml_splice_call from "rescript/lib/es6/caml_splice_call.js";
 
-function blub(prim0, prim1) {
-  return FsExtra.outputFile(prim0, prim1);
+function pdf(args) {
+  Server.serve(function (fromFile) {
+                    var routes = {};
+                    var templatePath = Path.join(args.template, "index.html");
+                    routes["GET /"] = (function (param) {
+                        return fromFile(templatePath);
+                      });
+                    return routes;
+                  }).then(function (server) {
+                  return Playwright.chromium.launch().then(function (browser) {
+                              return Promise.resolve([
+                                          browser,
+                                          server.port
+                                        ]);
+                            });
+                }).then(function (param) {
+                var browser = param[0];
+                var url = Helpers.buildUrl("localhost", "/", param[1]);
+                return browser.newPage().then(function (page) {
+                            return Promise.resolve([
+                                        page,
+                                        url,
+                                        browser
+                                      ]);
+                          });
+              }).then(function (param) {
+              var browser = param[2];
+              var page = param[0];
+              return page.goto(param[1]).then(function (param) {
+                          return Promise.resolve([
+                                      page,
+                                      browser
+                                    ]);
+                        });
+            }).then(function (param) {
+            var browser = param[1];
+            var page = param[0];
+            return page.waitForSelector("body", {
+                          state: "attached",
+                          timeout: 5000
+                        }).then(function (param) {
+                        return Promise.resolve([
+                                    page,
+                                    browser
+                                  ]);
+                      });
+          }).then(function (param) {
+          var browser = param[1];
+          return param[0].pdf({
+                        path: Path.join(args.template, "index.pdf"),
+                        format: args.format
+                      }).then(function (param) {
+                      return Promise.resolve(browser);
+                    });
+        }).then(function (browser) {
+        return browser.close();
+      });
+  
 }
-
-function blah(prim) {
-  return Caml_splice_call.spliceApply(Path.join, [prim]);
-}
-
-function meh(prim) {
-  return Playwright.chromium();
-}
-
-var muh = Server.serve;
 
 export {
-  blub ,
-  blah ,
-  meh ,
-  muh ,
+  pdf ,
   
 }
 /* path Not a pure module */

@@ -1,4 +1,11 @@
-node_modules
+/node_modules/
+/lib/
+
+
+
+*.bs.js
+.bsb.lock
+.merlin
 
 
 
@@ -6,8 +13,14 @@ dist
 
 
 
-.evn
+.env
 
 
 
 .DS_Store
+
+
+
+test.js
+index.html
+index.pdf

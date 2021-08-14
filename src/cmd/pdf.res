@@ -1,43 +1,69 @@
+type t
+
+
+
 type args = {
   template: string,
-  data: string,
-  output: string,
-  filename: string,
+  // data: string,
+  // output: string,
+  // filename: string,
   format: string,
   // html: bool,
-  fonts: string,
-  images: string,
-  selector: string,
-  host: string,
-  path: string,
+  // fonts: string,
+  // images: string,
+  // selector: string,
+  // host: string,
+  // path: string,
 }
 
 
+
+type waitForSelectorOptions = {
+  state: string,
+  timeout: int
+}
+
+
+
+type pdfOptions = {
+  path: string,
+  format: string
+}
+
+
+
 type page = {
-  goto: string => Promise.t<unit>
+  goto: (. string) => Promise.t<unit>,
+  waitForSelector: (. string, waitForSelectorOptions) => Promise.t<unit>,
+  pdf: (. pdfOptions) => Promise.t<unit>
 }
 
 
 
 type browser = {
-  newPage: unit => Promise.t<page>
+  newPage: (. unit) => Promise.t<page>,
+  close: (. unit) => Promise.t<unit>
 }
 
 
 
 @module("fs-extra")
-external outputFile: string => string => Promise.t<unit> = "outputFile"
+external outputFile
+: string => string => Promise.t<unit> = "outputFile"
 
 
 
 @module("path")
 @variadic
-external joinPath: array<string> => string = "join"
+external joinPath
+: array<string> => string = "join"
 
 
 
 @module("playwright")
-external chromium: () => Promise.t<browser> = "chromium"
+@scope("chromium")
+external launch
+: () => Promise.t<browser> = "launch"
 
 
 
@@ -45,14 +71,73 @@ open Promise
 
 
 
+/* Command */
+
 let pdf =
   (args: args) =>
+
+  // start server
   Server.serve((. fromFile) => {
+    let routes = Js.Dict.empty()
     let templatePath = joinPath([args.template, "index.html"])
-    {
-      "GET /": templatePath
-    }
+    routes->Js.Dict.set("GET /", () => fromFile(. templatePath))
+    routes
   })
+
+  // start browser
+  ->then(
+    server =>
+    launch()->then( 
+      browser => ( browser, server.port )->resolve
+    )
+  )
+
+  // open a new tab
+  ->then(
+    (( browser, port )) => {
+      let url = Helpers.buildUrl("localhost", "/", port)
+      browser.newPage(.)->then(
+        page => ( page, url, browser )->resolve
+      )
+    }
+  )
+
+  // visit url
+  ->then(
+    (( page, url, browser )) =>
+    page.goto(. url)->then(
+      _ => ( page, browser )->resolve
+    )
+  )
+
+  // wait for page to load
+  ->then(
+    (( page, browser )) =>
+    page.waitForSelector(. "body", { 
+      state: "attached", 
+      timeout: 5000 
+    })->then( 
+      _ => ( page, browser )->resolve
+    )
+  )
+
+  // generate pdf
+  ->then(
+    (( page, browser )) =>
+    page.pdf(. {
+      path: joinPath([args.template, "index.pdf"]),
+      format: args.format
+    })->then(
+      _ => browser->resolve
+    )
+  )
+
+  // close the browser
+  ->then(
+    browser => browser.close(.)
+  )
+  ->ignore
+
 
 // import { outputFile } from 'fs-extra'
 // import { join as joinPath } from 'path'
