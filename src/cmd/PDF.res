@@ -1,16 +1,12 @@
-type t
-
-
-
 type args = {
   template: string,
   data: string,
   output: string,
   filename: string,
   format: string,
-  // html: bool,
-  // fonts: string,
-  // images: string,
+  html: bool,
+  fonts: string,
+  images: string,
   selector: string,
   host: string,
   path: string,
@@ -35,6 +31,7 @@ type pdfOptions = {
 type page = {
   goto: (. string) => Promise.t<unit>,
   waitForSelector: (. string, waitForSelectorOptions) => Promise.t<unit>,
+  content: (. unit) => Promise.t<string>,
   pdf: (. pdfOptions) => Promise.t<unit>
 }
 
@@ -50,6 +47,12 @@ type browser = {
 @module("fs-extra")
 external outputFile
 : string => string => Promise.t<unit> = "outputFile"
+
+
+
+@module("fs-extra") 
+external copy
+: string => string => Promise.t<unit> = "copy"
 
 
 
@@ -124,7 +127,7 @@ let pdf =
   // wait for page to load
   ->then(
     (( page, browser )) =>
-    page.waitForSelector(. "body", { 
+    page.waitForSelector(. args.selector, { 
       state: "attached", 
       timeout: 5000 
     })->then( 
@@ -132,7 +135,6 @@ let pdf =
     )
   )
 
-  // TODO: output html?
   // generate pdf
   ->then(
     (( page, browser )) =>
@@ -140,8 +142,46 @@ let pdf =
       path: joinPath([args.output, args.filename]),
       format: args.format
     })->then(
-      _ => browser->resolve
+      _ => (page, browser)->resolve
     )
+  )
+
+  // optionally output html
+  ->then(
+    (( page, browser )) => {
+      if args.html {
+        let htmlPath = joinPath([args.output, "html"])
+        all(Js.Array.map(
+          x =>
+          Promise.make((resolve, _) => {
+            resolve(. copy(
+              joinPath([args.template, x]), 
+              joinPath([htmlPath, x])
+            )->ignore)
+          }),
+          Js.Array.filter(x => x != "", [
+            args.fonts,
+            args.images
+          ]))
+        )
+        ->then( 
+          _ => 
+          page.content(.)->then( content => content->resolve )
+        )
+        ->then(
+          content =>
+          outputFile(
+            joinPath([htmlPath, "index.html"]),
+            content
+          )
+        )
+        ->then(
+          _ => browser->resolve
+        )
+      } else {
+        browser->resolve
+      }
+    }
   )
 
   // close the browser
