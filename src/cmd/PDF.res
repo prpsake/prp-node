@@ -4,16 +4,16 @@ type t
 
 type args = {
   template: string,
-  // data: string,
-  // output: string,
-  // filename: string,
+  data: string,
+  output: string,
+  filename: string,
   format: string,
   // html: bool,
   // fonts: string,
   // images: string,
-  // selector: string,
-  // host: string,
-  // path: string,
+  selector: string,
+  host: string,
+  path: string,
 }
 
 
@@ -63,7 +63,7 @@ external joinPath
 @module("playwright")
 @scope("chromium")
 external launch
-: () => Promise.t<browser> = "launch"
+: unit => Promise.t<browser> = "launch"
 
 
 
@@ -77,12 +77,23 @@ let pdf =
   (args: args) =>
 
   // start server
-  Server.serve((. fromFile) => {
-    let routes = Js.Dict.empty()
-    let templatePath = joinPath([args.template, "index.html"])
-    routes->Js.Dict.set("GET /", () => fromFile(. templatePath))
-    routes
-  })
+  Server.serve(
+    (. fromFile) =>
+    Js.Dict.fromList(list{
+      ( "GET " ++ args.path,
+        ( _: Server.req ) =>
+        fromFile(. joinPath([ args.template, "index.html" ]) )
+      ),
+      ( "GET " ++ joinPath([ args.path, "data" ]),
+        ( _: Server.req ) => 
+        fromFile(. args.data )
+      ),
+      ( "GET *",
+        ( req: Server.req ) =>
+        fromFile(. joinPath([ args.template, req.url ]))
+      )
+    })
+  )
 
   // start browser
   ->then(
@@ -95,7 +106,7 @@ let pdf =
   // open a new tab
   ->then(
     (( browser, port )) => {
-      let url = Helpers.buildUrl("localhost", "/", port)
+      let url = Helpers.buildUrl(args.host, args.path, port)
       browser.newPage(.)->then(
         page => ( page, url, browser )->resolve
       )
@@ -121,11 +132,12 @@ let pdf =
     )
   )
 
+  // TODO: output html?
   // generate pdf
   ->then(
     (( page, browser )) =>
     page.pdf(. {
-      path: joinPath([args.template, "index.pdf"]),
+      path: joinPath([args.output, args.filename]),
       format: args.format
     })->then(
       _ => browser->resolve
@@ -134,65 +146,11 @@ let pdf =
 
   // close the browser
   ->then(
-    browser => browser.close(.)
+    browser => 
+    browser.close(.)->then(
+      _ => "success"->resolve
+    )
   )
-  ->ignore
-
-
-// import { outputFile } from 'fs-extra'
-// import { join as joinPath } from 'path'
-// import { chromium } from 'playwright'
-
-
-
-// import { serve } from '../server.js';
-
-
-
-// /* Helpers */
-
-// const mergeOptions =
-//   options =>
-//   ({
-//     value: 'created',
-//     ...options
-//   })
-
-
-
-// const buildUrl =
-//   ({ host, path }) =>
-//   ({ port }) =>
-//   `${host}:${port}${path}`
-
-
-
-// /* Command */
-
-// export const pdf = 
-//   options =>
-//   async (args, opts = mergeOptions(options)) => {
-
-
-
-//   // start server and browser
-//   const server = 
-//     await serve(resp => 
-//     ({
-//       [`GET ${path}`]:                    () => resp.fromFile(joinPath(template, 'index.html')),
-//       [`GET ${joinPath(path, 'data')}`]:  () => resp.fromFile(data, null, null),
-//       "GET *":                            req => resp.fromFile(joinPath(template, req.url))
-//     }))
-
-//   const browser = await chromium.launch()
-
-
-
-//   // instruct browser
-//   const page = await browser.newPage()
-//   await page.goto(buildUrl(args, server))
-//   await page.waitForSelector(args.selector, { state: 'attached', timeout: 5000 })
-
 
 
 //   // output optional html
@@ -227,19 +185,3 @@ let pdf =
 //       )
 //     }
 //   }
-
-
-
-//   // output pdf
-//   await page.pdf({ path: joinPath(args.output, args.filename), format: args.format })
-
-
-
-//   // done
-//   await browser.close()
-//   return opts.value
-// }
-
-
-
-// export default { pdf }

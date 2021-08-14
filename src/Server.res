@@ -4,7 +4,11 @@ type t
 
 
 
-type routes = Js.Dict.t<unit => t>
+type req = { url: string }
+
+
+
+type routes = Js.Dict.t<req => t>
 
 
 
