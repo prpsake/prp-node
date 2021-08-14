@@ -22,7 +22,7 @@ type fn = ((. string) => t) => routes
 @module("minikin")
 @scope(("default", "default")) 
 external run
-: () => Promise.t<server> = "server"
+: unit => Promise.t<server> = "server"
 
 
 
