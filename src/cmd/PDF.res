@@ -101,8 +101,8 @@ let pdf =
   // start browser
   ->then(
     server =>
-    launch()->then( 
-      browser => ( browser, server.port )->resolve
+    launch()->thenResolve( 
+      browser => ( browser, server.port )
     )
   )
 
@@ -110,45 +110,45 @@ let pdf =
   ->then(
     (( browser, port )) => {
       let url = Helpers.buildUrl(args.host, args.path, port)
-      browser.newPage(.)->then(
-        page => ( page, url, browser )->resolve
+      browser.newPage(.)->thenResolve(
+        page => ( browser, page, url )
       )
     }
   )
 
   // visit url
   ->then(
-    (( page, url, browser )) =>
-    page.goto(. url)->then(
-      _ => ( page, browser )->resolve
+    (( browser, page, url )) =>
+    page.goto(. url)->thenResolve(
+      _ => ( browser, page )
     )
   )
 
   // wait for page to load
   ->then(
-    (( page, browser )) =>
+    (( browser, page )) =>
     page.waitForSelector(. args.selector, { 
       state: "attached", 
       timeout: 5000 
-    })->then( 
-      _ => ( page, browser )->resolve
+    })->thenResolve( 
+      _ => ( browser, page )
     )
   )
 
   // generate pdf
   ->then(
-    (( page, browser )) =>
+    (( browser, page )) =>
     page.pdf(. {
       path: joinPath([args.output, args.filename]),
       format: args.format
-    })->then(
-      _ => (page, browser)->resolve
+    })->thenResolve(
+      _ => ( browser, page )
     )
   )
 
   // optionally output html
   ->then(
-    (( page, browser )) => {
+    (( browser, page )) => {
       if args.html {
         let htmlPath = joinPath([args.output, "html"])
         all(Js.Array.map(
@@ -164,20 +164,15 @@ let pdf =
             args.images
           ]))
         )
-        ->then( 
-          _ => 
-          page.content(.)->then( content => content->resolve )
-        )
-        ->then(
+        ->then( _ => page.content(.) )
+        ->thenResolve(
           content =>
           outputFile(
             joinPath([htmlPath, "index.html"]),
             content
           )
         )
-        ->then(
-          _ => browser->resolve
-        )
+        ->thenResolve( _ => browser )
       } else {
         browser->resolve
       }
@@ -190,4 +185,10 @@ let pdf =
     browser.close(.)->then(
       _ => "success"->resolve
     )
+  )
+
+  ->catch(
+    _ => {
+      resolve("failure")
+    }
   )
