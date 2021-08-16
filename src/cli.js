@@ -54,6 +54,11 @@ const coerceNonEmtpyString =
   }
 
 
+
+const coerceBoolean = arg => !!arg
+
+
+
 export default () =>
   yargs(hideBin(process.argv))
   .scriptName('prp-node')
@@ -110,7 +115,8 @@ export default () =>
       },
       html: {
         demandOption: false,
-        describe: 'Also output html version.'
+        describe: 'Also output html version.',
+        coerce: coerceBoolean
       },
       fonts: {
         type: 'string',

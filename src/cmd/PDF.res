@@ -1,15 +1,15 @@
 type args = {
-  template: string,
-  data: string,
-  output: string,
+  templatedir: string,
+  datafile: string,
+  outputdir: string,
   filename: string,
   format: string,
   html: bool,
   fonts: string,
   images: string,
-  selector: string,
-  host: string,
-  path: string,
+  waitforselector: string,
+  hostname: string,
+  hostpathname: string,
 }
 
 
@@ -83,17 +83,17 @@ let pdf =
   Server.serve(
     (. fromFile) =>
     Js.Dict.fromList(list{
-      ( "GET " ++ args.path,
+      ( "GET " ++ args.hostpathname,
         ( _: Server.req ) =>
-        fromFile(. joinPath([ args.template, "index.html" ]) )
+        fromFile(. joinPath([ args.templatedir, "index.html" ]) )
       ),
-      ( "GET " ++ joinPath([ args.path, "data" ]),
+      ( "GET " ++ joinPath([ args.hostpathname, "data" ]),
         ( _: Server.req ) => 
-        fromFile(. args.data )
+        fromFile(. args.datafile )
       ),
       ( "GET *",
         ( req: Server.req ) =>
-        fromFile(. joinPath([ args.template, req.url ]))
+        fromFile(. joinPath([ args.templatedir, req.url ]))
       )
     })
   )
@@ -109,7 +109,7 @@ let pdf =
   // open a new tab
   ->then(
     (( browser, port )) => {
-      let url = Helpers.buildUrl(args.host, args.path, port)
+      let url = Helpers.buildUrl(args.hostname, args.hostpathname, port)
       browser.newPage(.)->thenResolve(
         page => ( browser, page, url )
       )
@@ -127,7 +127,7 @@ let pdf =
   // wait for page to load
   ->then(
     (( browser, page )) =>
-    page.waitForSelector(. args.selector, { 
+    page.waitForSelector(. args.waitforselector, { 
       state: "attached", 
       timeout: 5000 
     })->thenResolve( 
@@ -139,7 +139,7 @@ let pdf =
   ->then(
     (( browser, page )) =>
     page.pdf(. {
-      path: joinPath([args.output, args.filename]),
+      path: joinPath([args.outputdir, args.filename]),
       format: args.format
     })->thenResolve(
       _ => ( browser, page )
@@ -150,12 +150,12 @@ let pdf =
   ->then(
     (( browser, page )) => {
       if args.html {
-        let htmlPath = joinPath([args.output, "html"])
+        let htmlPath = joinPath([args.outputdir, "html"])
         all(Js.Array.map(
           x =>
           Promise.make((resolve, _) => {
             resolve(. copy(
-              joinPath([args.template, x]), 
+              joinPath([args.templatedir, x]), 
               joinPath([htmlPath, x])
             )->ignore)
           }),
