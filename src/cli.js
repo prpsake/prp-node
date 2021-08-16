@@ -55,6 +55,10 @@ const coerceNonEmtpyString =
 
 
 
+const coerceString = arg => arg || ""
+
+
+
 const coerceBoolean = arg => !!arg
 
 
@@ -80,7 +84,7 @@ export default () =>
         demandOption: false,
         alias: 'd',
         describe: 'Absolute path to a data file.',
-        coerce: coerceNonEmtpyString('pdf', 'datafile')
+        coerce: coerceString
       },
       outputdir: {
         type: 'string',
@@ -94,7 +98,6 @@ export default () =>
         demandOption: false,
         alias: 'n',
         describe: 'Name of the output file.',
-        coerce: coerceNonEmtpyString('pdf', 'filename'),
         default: 'prp.pdf'
       },
       format: {
@@ -102,7 +105,6 @@ export default () =>
         demandOption: false,
         alias: 'f',
         describe: 'Format of the output file.',
-        coerce: coerceNonEmtpyString('pdf', 'format'),
         default: 'A4'
       },
       waitforselector: {
@@ -110,7 +112,6 @@ export default () =>
         demandOption: false,
         alias: 's',
         describe: 'CSS selector to wait for before pdf creation.',
-        coerce: coerceNonEmtpyString('pdf', 'waitforselector'),
         default: 'body'
       },
       html: {
@@ -122,26 +123,24 @@ export default () =>
         type: 'string',
         demandOption: false,
         describe: 'Relative path to the template font directory',
-        coerce: coerceNonEmtpyString('pdf', 'fonts'),
+        coerce: coerceString
       },
       images: {
         type: 'string',
         demandOption: false,
         describe: 'Relative path to the template image directory',
-        coerce: coerceNonEmtpyString('pdf', 'images'),
+        coerce: coerceString
       },
       hostname: {
         type: 'string',
         demandOption: false,
         describe: 'Server hostname with protocol.',
-        coerce: coerceNonEmtpyString('pdf', 'hostname'),
         default: 'http://localhost'
       },
       hostpathname: {
         type: 'string',
         demandOption: false,
         describe: 'Server host pathname',
-        coerce: coerceNonEmtpyString('pdf', 'hostpathname'),
         default: '/'
       }
     },

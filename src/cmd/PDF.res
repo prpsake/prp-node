@@ -1,3 +1,7 @@
+type t
+
+
+
 type args = {
   templatedir: string,
   datafile: string,
@@ -31,7 +35,7 @@ type pdfOptions = {
 type page = {
   goto: (. string) => Promise.t<unit>,
   waitForSelector: (. string, waitForSelectorOptions) => Promise.t<unit>,
-  content: (. unit) => Promise.t<string>,
+  content: (. unit) => Promise.t<t>,
   pdf: (. pdfOptions) => Promise.t<unit>
 }
 
@@ -46,7 +50,7 @@ type browser = {
 
 @module("fs-extra")
 external outputFile
-: string => string => Promise.t<unit> = "outputFile"
+: string => t => Promise.t<unit> = "outputFile"
 
 
 
@@ -81,21 +85,31 @@ let pdf =
 
   // start server
   Server.serve(
-    (. fromFile) =>
-    Js.Dict.fromList(list{
-      ( "GET " ++ args.hostpathname,
+    (. fromFile) => {
+      // TODO: needs to be in a certain order. Also, just pass a list to Server
+      let routes = Js.Dict.empty()
+      Js.Dict.set(
+        routes,
+        "GET " ++ args.hostpathname,
         ( _: Server.req ) =>
         fromFile(. joinPath([ args.templatedir, "index.html" ]) )
-      ),
-      ( "GET " ++ joinPath([ args.hostpathname, "data" ]),
-        ( _: Server.req ) => 
-        fromFile(. args.datafile )
-      ),
-      ( "GET *",
+      )
+      if args.datafile !== "" {
+        Js.Dict.set(
+          routes,
+          "GET " ++ joinPath([ args.hostpathname, "data" ]),
+          ( _: Server.req ) => 
+          fromFile(. args.datafile )
+        )
+      }
+      Js.Dict.set(
+        routes,
+        "GET *",
         ( req: Server.req ) =>
         fromFile(. joinPath([ args.templatedir, req.url ]))
       )
-    })
+      routes
+    }
   )
 
   // start browser
@@ -159,7 +173,7 @@ let pdf =
               joinPath([htmlPath, x])
             )->ignore)
           }),
-          Js.Array.filter(x => x != "", [
+          Js.Array.filter(x => x !== "", [
             args.fonts,
             args.images
           ]))
