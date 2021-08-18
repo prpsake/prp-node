@@ -1,12 +1,12 @@
 /* App */
 import cli from './cli.js'
-import { pdf } from './cmd/PDF.bs.js'
+import { PDF } from './cmd/PDF.bs.js'
 
 
 
 /* Commands */
 
-const command = { pdf }
+const command = { pdf: PDF.create }
 
 
 

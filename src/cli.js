@@ -1,42 +1,7 @@
 /* CLI */
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers'
-
-
-
-const color = 
-  { green: '\x1b[32m'
-  , red: '\x1b[31m'
-  , dim: '\x1b[2m'
-  , reset: '\x1b[0m'
-  }
-
-
-
- const log =
-  val =>
-  ({
-    concat: other => log(val += other.val),
-    replace: (str, repl) => log(val.replace(`%${str}`, repl)),
-    cmd: cmd => log(val).replace('cmd', cmd),
-    msg: msg => log(val).replace('msg', msg),
-    color: color => log(val).replace('color', color),
-    time: () => log(val).replace('time', new Date().toISOString()),
-    log: () => console.log(log(val).time().val),
-    val
-  })
-
-
-
-const logDefault = 
-  log(
-    [ `PRP${color.dim} %time`
-    , `${color.reset}prp-node %cmd`
-    , `%color%msg`
-    ]
-    .join(' : ')
-    .concat(color.reset)
-  )
+import { logDefault, logColor } from './Log.bs.js';
 
 
 
@@ -46,9 +11,9 @@ const coerceNonEmtpyString =
     if (arg !== '') return arg
     throw new Error(
       logDefault
-      .cmd(cmd)
-      .msg(`${param} : Argument must not be empty.`)
-      .color(color.red)
+      .replace('cmd', cmd)
+      .replace('msg', `${param} : Argument must not be empty.`)
+      .replace('color', logColor.red)
       .time().val
     )
   }
@@ -146,19 +111,18 @@ export default () =>
     },
     handler: args => 
       logDefault
-      .cmd(args._[0])
-      .msg('Creating pdf.')
-      .color(color.green)
+      .replace('cmd', args._[0])
+      .replace('msg', 'Creating pdf.')
+      .replace('color', logColor.green)
       .log()
   })
   .demandCommand(
     1,
     logDefault
-    .cmd('<cmd>')
-    .msg('You need at least one command before moving on.')
-    .color(color.red)
-    .time()
-    .val
+    .replace('cmd', '<cmd>')
+    .replace('msg', 'You need at least one command before moving on.')
+    .replace('color', logColor.red)
+    .time().val
   )
   .help()
   .argv
