@@ -16,12 +16,12 @@ type responseOptions =
 
 type encoding = 
   [
-      #utf8
-    | #binary
-    | #hex
-    | #ascii
-    | #base64
-    | #latin1
+    #utf8
+  | #binary
+  | #hex
+  | #ascii
+  | #base64
+  | #latin1
   ]
 
 

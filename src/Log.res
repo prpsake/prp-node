@@ -1,3 +1,5 @@
+/* Log */
+
 type rec log =
   {
     concat: log => log,
@@ -9,11 +11,24 @@ type rec log =
 
 
 
+type colors = 
+  [ #green
+  | #red
+  | #dim
+  | #reset
+  ]
+
+
+
+// NB: warning for unicode string literal in normal quote ""
+// SOURCE: https://github.com/rescript-lang/rescript-compiler/issues/3691
 let logColor = 
-  { "green": "\x1b[32m"
-  , "red": "\x1b[31m"
-  , "dim": "\x1b[2m"
-  , "reset": "\x1b[0m"
+  name =>
+  switch name {
+  | #green => `\x1b[32m`
+  | #red => `\x1b[31m`
+  | #dim => `\x1b[2m`
+  | #reset => `\x1b[0m`
   }
 
 
@@ -33,9 +48,9 @@ let rec log: string => log =
 let logDefault: log = 
   log(
     Js.Array.joinWith(" : ",
-      [ `PRP${logColor["dim"]} %time`
-      , `${logColor["reset"]}prp-node %cmd`
-      , `%color%msg${logColor["reset"]}`
+      [ `PRP${logColor(#dim)} %time`
+      , `${logColor(#reset)}prp-node %cmd`
+      , `%color%msg${logColor(#reset)}`
       ]
     )
   )

@@ -1,7 +1,9 @@
+/* PDF */
+
 module type PDF = {
   
   type args
-  let create: args => Promise.t<string>
+  let pdf: args => Promise.t<string>
   
 }
 
@@ -85,10 +87,6 @@ module PDF: PDF = {
 
 
 
-  open Promise
-
-
-
   /* Helpers */
 
   let buildUrl =
@@ -99,10 +97,11 @@ module PDF: PDF = {
     j`$host:$port$path`
 
 
-
   /* Command */
 
-  let create =
+  let pdf = {
+    open Promise
+
     (args: args) =>
 
     // start server and browser
@@ -115,7 +114,7 @@ module PDF: PDF = {
       (( server, browser )) => {
         let url = buildUrl(args.hostname, args.hostpathname, server.port)
         let routes = Js.Dict.empty()
-
+        
         if args.datafile !== "" {
           Js.Dict.set(
             routes,
@@ -227,13 +226,31 @@ module PDF: PDF = {
     ->then(
       browser => 
       browser.close(.)->then(
-        _ => "success"->resolve
+        _ => {
+          resolve(
+            Log
+            .logDefault
+            .replace(. "cmd", "pdf")
+            .replace(. "msg", "created")
+            .replace(. "color", Log.logColor(#green))
+            .time(.).val
+          )
+        }
       )
     )
 
     ->catch(
       _ => {
-        resolve("failure")
+        resolve(
+          Log
+          .logDefault
+          .replace(. "cmd", "pdf")
+          .replace(. "msg", "failed")
+          .replace(. "color", Log.logColor(#red))
+          .time(.).val
+        )
       }
     )
+
+  }
 }

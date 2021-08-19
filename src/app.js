@@ -1,12 +1,13 @@
 /* App */
 import cli from './cli.js'
+import { logDefault, logColor } from './Log.bs.js';
 import { PDF } from './cmd/PDF.bs.js'
 
 
 
 /* Commands */
 
-const command = { pdf: PDF.create }
+const command = { pdf: PDF.pdf }
 
 
 
@@ -21,7 +22,11 @@ const command = { pdf: PDF.create }
     process.exit(0)
 
   } catch(e) {
-    console.log(e)
+    logDefault
+    .replace('cmd', args._[0])
+    .replace('msg', e.message.replace('args._[0]', args._[0]))
+    .replace('color', logColor("red"))
+    .log()
     process.exit(1)
   }
 })()

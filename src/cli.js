@@ -13,7 +13,7 @@ const coerceNonEmtpyString =
       logDefault
       .replace('cmd', cmd)
       .replace('msg', `${param} : Argument must not be empty.`)
-      .replace('color', logColor.red)
+      .replace('color', logColor("red"))
       .time().val
     )
   }
@@ -112,8 +112,8 @@ export default () =>
     handler: args => 
       logDefault
       .replace('cmd', args._[0])
-      .replace('msg', 'Creating pdf.')
-      .replace('color', logColor.green)
+      .replace('msg', 'creating')
+      .replace('color', logColor("green"))
       .log()
   })
   .demandCommand(
@@ -121,7 +121,7 @@ export default () =>
     logDefault
     .replace('cmd', '<cmd>')
     .replace('msg', 'You need at least one command before moving on.')
-    .replace('color', logColor.red)
+    .replace('color', logColor("red"))
     .time().val
   )
   .help()
