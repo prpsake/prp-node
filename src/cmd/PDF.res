@@ -105,51 +105,57 @@ module PDF: PDF = {
   let create =
     (args: args) =>
 
-    // start server
-    Server.serve(
-      (. fromFile) => {
-        // TODO: needs to be in a certain order. Also, just pass a list to Server
+    // start server and browser
+    all2((
+      Server.serve(),
+      launch()
+    ))
+
+    ->then(
+      (( server, browser )) => {
+        let url = buildUrl(args.hostname, args.hostpathname, server.port)
         let routes = Js.Dict.empty()
-        Js.Dict.set(
-          routes,
-          "GET " ++ args.hostpathname,
-          ( _: Server.req ) =>
-          fromFile(. joinPath([ args.templatedir, "index.html" ]) )
-        )
+
         if args.datafile !== "" {
           Js.Dict.set(
             routes,
             "GET " ++ joinPath([ args.hostpathname, "data" ]),
             ( _: Server.req ) => 
-            fromFile(. args.datafile )
+            Server.respond.fromFile(. 
+              args.datafile, 
+              Js.Nullable.null, 
+              Js.Nullable.null
+            )
           )
         }
+
+        Js.Dict.set(
+          routes,
+          "GET " ++ args.hostpathname,
+          ( _: Server.req ) =>
+          Server.respond.fromFile(. 
+            joinPath([ args.templatedir, "index.html" ]),
+            Js.Nullable.null, 
+            Js.Nullable.return(#utf8)
+          )
+        )
+
         Js.Dict.set(
           routes,
           "GET *",
           ( req: Server.req ) =>
-          fromFile(. joinPath([ args.templatedir, req.url ]))
+          Server.respond.fromFile(. 
+            joinPath([ args.templatedir, req.url ]),
+            Js.Nullable.null,
+            Js.Nullable.return(#utf8)
+          )
         )
-        routes
-      }
-    )
 
-    // start browser
-    ->then(
-      server =>
-      launch()->thenResolve( 
-        browser => ( browser, server.port )
-      )
-    )
-
-    // open a new tab
-    ->then(
-      (( browser, port )) => {
-        let url = buildUrl(args.hostname, args.hostpathname, port)
+        server.routes(. routes)
         browser.newPage(.)->thenResolve(
           page => ( browser, page, url )
         )
-      }
+      }     
     )
 
     // visit url
@@ -187,18 +193,20 @@ module PDF: PDF = {
       (( browser, page )) => {
         if args.html {
           let htmlPath = joinPath([args.outputdir, "html"])
-          all(Js.Array.map(
-            x =>
-            Promise.make((resolve, _) => {
-              resolve(. copy(
-                joinPath([args.templatedir, x]), 
-                joinPath([htmlPath, x])
-              )->ignore)
-            }),
-            Js.Array.filter(x => x !== "", [
-              args.fonts,
-              args.images
-            ]))
+          all(
+            Js.Array.map(
+              x =>
+              Promise.make((resolve, _) => {
+                resolve(. copy(
+                  joinPath([args.templatedir, x]), 
+                  joinPath([htmlPath, x])
+                )->ignore)
+              }),
+              Js.Array.filter(x => x !== "", [
+                args.fonts,
+                args.images
+              ])
+            )
           )
           ->then( _ => page.content(.) )
           ->thenResolve(

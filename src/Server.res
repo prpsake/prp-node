@@ -1,6 +1,38 @@
 /* Server */
 
-type t
+type headers = array<(string, string)>
+
+
+
+type responseOptions = 
+  { 
+    statusCode: Js.Nullable.t<int>
+  , statusMessage: Js.Nullable.t<string>
+  , headers: Js.Nullable.t<headers>
+  , trailers: Js.Nullable.t<headers>
+  }
+
+
+
+type encoding = 
+  [
+      #utf8
+    | #binary
+    | #hex
+    | #ascii
+    | #base64
+    | #latin1
+  ]
+
+
+
+type rec response = {
+ fromFile: (.
+    string, 
+    Js.Nullable.t<responseOptions>, 
+    Js.Nullable.t<encoding>
+  ) => response
+}
 
 
 
@@ -8,46 +40,30 @@ type req = { url: string }
 
 
 
-type routes = Js.Dict.t<req => t>
+type routes = Js.Dict.t<req => response>
 
 
 
-type server = {
-  port: int,
-  routes: (. routes) => unit
-}
-
-
-
-type fn = ((. string) => t) => routes
+type server = 
+  {
+    port: int
+  , routes: (. routes) => unit
+  }
 
 
 
 @module("minikin")
 @scope(("default", "default")) 
-external run
+external server
 : unit => Promise.t<server> = "server"
 
 
 
 @module("minikin")
-@scope("Response")
-external fromFile
-: (. string) => t = "fromFile"
+external response
+: response = "Response"
 
 
 
-open Promise
-
-
-
-let serve =
-  fn =>
-  run()
-  ->then( 
-    server => {
-      let routes = fn(. fromFile)
-      server.routes(. routes)
-      server->resolve
-    }
-  )
+let serve = server
+let respond = response
