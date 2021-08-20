@@ -11,10 +11,6 @@ module type PDF = {
 
 module PDF: PDF = {
 
-  type t
-
-
-
   type args = {
     templatedir: string,
     datafile: string,
@@ -31,39 +27,9 @@ module PDF: PDF = {
 
 
 
-  type waitForSelectorOptions = {
-    state: string,
-    timeout: int
-  }
-
-
-
-  type pdfOptions = {
-    path: string,
-    format: string
-  }
-
-
-
-  type page = {
-    goto: (. string) => Promise.t<unit>,
-    waitForSelector: (. string, waitForSelectorOptions) => Promise.t<unit>,
-    content: (. unit) => Promise.t<t>,
-    pdf: (. pdfOptions) => Promise.t<unit>
-  }
-
-
-
-  type browser = {
-    newPage: (. unit) => Promise.t<page>,
-    close: (. unit) => Promise.t<unit>
-  }
-
-
-
   @module("fs-extra")
   external outputFile
-  : string => t => Promise.t<unit> = "outputFile"
+  : string => 'a => Promise.t<unit> = "outputFile"
 
 
 
@@ -80,13 +46,6 @@ module PDF: PDF = {
 
 
 
-  @module("playwright")
-  @scope("chromium")
-  external launch
-  : unit => Promise.t<browser> = "launch"
-
-
-
   /* Helpers */
 
   let buildUrl =
@@ -97,160 +56,177 @@ module PDF: PDF = {
     j`$host:$port$path`
 
 
+
   /* Command */
 
   let pdf = {
     open Promise
 
-    (args: args) =>
+    (args: args) => {
 
-    // start server and browser
-    all2((
-      Server.serve(),
-      launch()
-    ))
+      let templatePath = joinPath([ args.templatedir, "index.html" ])
+      let dataFilePath = args.datafile
 
-    ->then(
-      (( server, browser )) => {
-        let url = buildUrl(args.hostname, args.hostpathname, server.port)
-        let routes = Js.Dict.empty()
-        
-        if args.datafile !== "" {
+
+      // validate paths
+      Validator.pathsExist([
+        templatePath,
+        dataFilePath
+      ])
+
+      // start server and browser
+      ->then(
+        _ =>
+        all2((
+          Server.launch(),
+          Browser.launch()
+        ))
+      )
+
+      // set server routes and open browser 'tab'
+      ->then(
+        (( server, browser )) => {
+          let url = buildUrl(args.hostname, args.hostpathname, server.port)
+          let routes = Js.Dict.empty()
+
+          if dataFilePath !== "" {
+            Js.Dict.set(
+              routes,
+              "GET " ++ joinPath([ args.hostpathname, "data" ]),
+              ( _: Server.req ) => 
+              Server.respond.fromFile(. 
+                dataFilePath, 
+                Js.Nullable.null, 
+                Js.Nullable.null
+              )
+            )
+          }
+
           Js.Dict.set(
             routes,
-            "GET " ++ joinPath([ args.hostpathname, "data" ]),
-            ( _: Server.req ) => 
+            "GET " ++ args.hostpathname,
+            ( _: Server.req ) =>
             Server.respond.fromFile(. 
-              args.datafile, 
+              templatePath,
               Js.Nullable.null, 
-              Js.Nullable.null
+              Js.Nullable.return(#utf8)
             )
           )
+
+          Js.Dict.set(
+            routes,
+            "GET *",
+            ( req: Server.req ) =>
+            Server.respond.fromFile(. 
+              joinPath([ args.templatedir, req.url ]),
+              Js.Nullable.null,
+              Js.Nullable.return(#utf8)
+            )
+          )
+
+          server.routes(. routes)
+          browser.newPage(.)->thenResolve(
+            page => ( browser, page, url )
+          )
+        }     
+      )
+
+      // visit url
+      ->then(
+        (( browser, page, url )) =>
+        page.goto(. url)->thenResolve(
+          _ => ( browser, page )
+        )
+      )
+
+      // wait for page to load
+      ->then(
+        (( browser, page )) =>
+        page.waitForSelector(. args.waitforselector, { 
+          state: "attached", 
+          timeout: 5000 
+        })->thenResolve( 
+          _ => ( browser, page )
+        )
+      )
+
+      // generate pdf
+      ->then(
+        (( browser, page )) =>
+        page.pdf(. {
+          path: joinPath([args.outputdir, args.filename]),
+          format: args.format
+        })->thenResolve(
+          _ => ( browser, page )
+        )
+      )
+
+      // optionally output html
+      ->then(
+        (( browser, page )) => {
+          if args.html {
+            let htmlPath = joinPath([args.outputdir, "html"])
+            all(
+              Js.Array.map(
+                x =>
+                Promise.make((resolve, _) => {
+                  resolve(. copy(
+                    joinPath([args.templatedir, x]), 
+                    joinPath([htmlPath, x])
+                  )->ignore)
+                }),
+                Js.Array.filter(x => x !== "", [
+                  args.fonts,
+                  args.images
+                ])
+              )
+            )
+            ->then( _ => page.content(.) )
+            ->thenResolve(
+              content =>
+              outputFile(
+                joinPath([htmlPath, "index.html"]),
+                content
+              )
+            )
+            ->thenResolve( _ => browser )
+          } else {
+            browser->resolve
+          }
         }
-
-        Js.Dict.set(
-          routes,
-          "GET " ++ args.hostpathname,
-          ( _: Server.req ) =>
-          Server.respond.fromFile(. 
-            joinPath([ args.templatedir, "index.html" ]),
-            Js.Nullable.null, 
-            Js.Nullable.return(#utf8)
-          )
-        )
-
-        Js.Dict.set(
-          routes,
-          "GET *",
-          ( req: Server.req ) =>
-          Server.respond.fromFile(. 
-            joinPath([ args.templatedir, req.url ]),
-            Js.Nullable.null,
-            Js.Nullable.return(#utf8)
-          )
-        )
-
-        server.routes(. routes)
-        browser.newPage(.)->thenResolve(
-          page => ( browser, page, url )
-        )
-      }     
-    )
-
-    // visit url
-    ->then(
-      (( browser, page, url )) =>
-      page.goto(. url)->thenResolve(
-        _ => ( browser, page )
       )
-    )
 
-    // wait for page to load
-    ->then(
-      (( browser, page )) =>
-      page.waitForSelector(. args.waitforselector, { 
-        state: "attached", 
-        timeout: 5000 
-      })->thenResolve( 
-        _ => ( browser, page )
-      )
-    )
-
-    // generate pdf
-    ->then(
-      (( browser, page )) =>
-      page.pdf(. {
-        path: joinPath([args.outputdir, args.filename]),
-        format: args.format
-      })->thenResolve(
-        _ => ( browser, page )
-      )
-    )
-
-    // optionally output html
-    ->then(
-      (( browser, page )) => {
-        if args.html {
-          let htmlPath = joinPath([args.outputdir, "html"])
-          all(
-            Js.Array.map(
-              x =>
-              Promise.make((resolve, _) => {
-                resolve(. copy(
-                  joinPath([args.templatedir, x]), 
-                  joinPath([htmlPath, x])
-                )->ignore)
-              }),
-              Js.Array.filter(x => x !== "", [
-                args.fonts,
-                args.images
-              ])
+      // close the browser
+      ->then(
+        browser => 
+        browser.close(.)->then(
+          _ => {
+            resolve(
+              Log
+              .logDefault
+              .replace(. "cmd", "pdf")
+              .replace(. "msg", "created")
+              .replace(. "color", Log.logColor(#green))
+              .time(.).val
             )
-          )
-          ->then( _ => page.content(.) )
-          ->thenResolve(
-            content =>
-            outputFile(
-              joinPath([htmlPath, "index.html"]),
-              content
-            )
-          )
-          ->thenResolve( _ => browser )
-        } else {
-          browser->resolve
-        }
-      }
-    )
+          }
+        )
+      )
 
-    // close the browser
-    ->then(
-      browser => 
-      browser.close(.)->then(
-        _ => {
+      ->catch(
+        e => {
+          Js.log(e)
           resolve(
             Log
             .logDefault
             .replace(. "cmd", "pdf")
-            .replace(. "msg", "created")
-            .replace(. "color", Log.logColor(#green))
+            .replace(. "msg", "failed")
+            .replace(. "color", Log.logColor(#red))
             .time(.).val
           )
         }
       )
-    )
 
-    ->catch(
-      _ => {
-        resolve(
-          Log
-          .logDefault
-          .replace(. "cmd", "pdf")
-          .replace(. "msg", "failed")
-          .replace(. "color", Log.logColor(#red))
-          .time(.).val
-        )
-      }
-    )
-
+    }
   }
 }
