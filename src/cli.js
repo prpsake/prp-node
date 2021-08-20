@@ -1,30 +1,8 @@
 /* CLI */
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers'
+import { throwOnEmtpyString, coerceString, coerceBool } from './Validator.bs.js'
 import { logDefault, logColor } from './Log.bs.js';
-
-
-
-const coerceNonEmtpyString =
-  (cmd, param) =>
-  arg => {
-    if (arg !== '') return arg
-    throw new Error(
-      logDefault
-      .replace('cmd', cmd)
-      .replace('msg', `${param} : Argument must not be empty.`)
-      .replace('color', logColor("red"))
-      .time().val
-    )
-  }
-
-
-
-const coerceString = arg => arg || ""
-
-
-
-const coerceBoolean = arg => !!arg
 
 
 
@@ -42,7 +20,16 @@ export default () =>
         demandOption: true,
         alias: 't',
         describe: 'Absolute path to a template directory.',
-        coerce: coerceNonEmtpyString('pdf', 'templatedir')
+        coerce: 
+          arg => 
+          throwOnEmtpyString(
+            logDefault
+            .replace('cmd', 'pdf')
+            .replace('msg', 'templatedir : Argument must not be empty.')
+            .replace('color', logColor("red"))
+            .time().val,
+            arg
+          )
       },
       datafile: {
         type: 'string',
@@ -56,7 +43,16 @@ export default () =>
         demandOption: true,
         alias: 'o',
         describe: 'Absolute path to a output directory.',
-        coerce: coerceNonEmtpyString('pdf', 'outputdir')
+        coerce: 
+          arg => 
+          throwOnEmtpyString(
+            logDefault
+            .replace('cmd', 'pdf')
+            .replace('msg', 'outputdir : Argument must not be empty.')
+            .replace('color', logColor("red"))
+            .time().val,
+            arg
+          )
       },
       filename: {
         type: 'string',
@@ -82,7 +78,7 @@ export default () =>
       html: {
         demandOption: false,
         describe: 'Also output html version.',
-        coerce: coerceBoolean
+        coerce: coerceBool
       },
       fonts: {
         type: 'string',

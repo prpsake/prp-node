@@ -22,7 +22,7 @@ let pathsExist = {
     Js.Array.map(
       path =>
       open_(path, "r"),
-      Js.Array.filter(x => x !== "", paths)
+      paths
     )
   )
   ->then(
@@ -35,4 +35,43 @@ let pathsExist = {
     )
   )
 }
+
+
+
+let isStringEmpty: string => bool = x => x === ""
+
+
+
+let isStringNotEmpty: string => bool =
+   x => 
+   Js.typeof(x) === "string" &&
+   Js.String2.length(x) > 0
   
+
+
+let coerceString: option<string> => string = 
+  x =>
+  switch x {
+  | Some(x) => j`$x`
+  | None => ""
+  }
+
+
+
+let coerceBool: option<bool> => bool =
+  x =>
+  switch x {
+  | Some(_) => true
+  | None => false
+  }
+
+
+
+let throwOnEmtpyString: string => string => string =
+  msg =>
+  x =>
+  if isStringNotEmpty(x) {
+    x
+  } else {
+    Js.Exn.raiseError(msg)
+  }

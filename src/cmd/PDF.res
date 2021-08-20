@@ -66,13 +66,15 @@ module PDF: PDF = {
 
       let templatePath = joinPath([ args.templatedir, "index.html" ])
       let dataFilePath = args.datafile
-
+      let pathsToValidate = Js.Array.filter(
+        Validator.isStringNotEmpty,
+        [ templatePath
+        , dataFilePath
+        ]
+      )
 
       // validate paths
-      Validator.pathsExist([
-        templatePath,
-        dataFilePath
-      ])
+      Validator.pathsExist(pathsToValidate)
 
       // start server and browser
       ->then(
@@ -87,13 +89,11 @@ module PDF: PDF = {
       ->then(
         (( server, browser )) => {
           let url = buildUrl(args.hostname, args.hostpathname, server.port)
-          let routes = Js.Dict.empty()
 
-          if dataFilePath !== "" {
-            Js.Dict.set(
-              routes,
+          if Validator.isStringNotEmpty(dataFilePath) {
+            server.route(
               "GET " ++ joinPath([ args.hostpathname, "data" ]),
-              ( _: Server.req ) => 
+              _ => 
               Server.respond.fromFile(. 
                 dataFilePath, 
                 Js.Nullable.null, 
@@ -102,10 +102,9 @@ module PDF: PDF = {
             )
           }
 
-          Js.Dict.set(
-            routes,
+          server.route(
             "GET " ++ args.hostpathname,
-            ( _: Server.req ) =>
+            _ =>
             Server.respond.fromFile(. 
               templatePath,
               Js.Nullable.null, 
@@ -113,10 +112,9 @@ module PDF: PDF = {
             )
           )
 
-          Js.Dict.set(
-            routes,
+          server.route(
             "GET *",
-            ( req: Server.req ) =>
+            req =>
             Server.respond.fromFile(. 
               joinPath([ args.templatedir, req.url ]),
               Js.Nullable.null,
@@ -124,7 +122,6 @@ module PDF: PDF = {
             )
           )
 
-          server.routes(. routes)
           browser.newPage(.)->thenResolve(
             page => ( browser, page, url )
           )
@@ -175,10 +172,12 @@ module PDF: PDF = {
                     joinPath([htmlPath, x])
                   )->ignore)
                 }),
-                Js.Array.filter(x => x !== "", [
-                  args.fonts,
-                  args.images
-                ])
+                Js.Array.filter(
+                  Validator.isStringNotEmpty,
+                  [ args.fonts
+                  , args.images
+                  ]
+                )
               )
             )
             ->then( _ => page.content(.) )

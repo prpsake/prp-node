@@ -40,14 +40,10 @@ type req = { url: string }
 
 
 
-type routes = Js.Dict.t<req => response>
-
-
-
 type server = 
   {
     port: int
-  , routes: (. routes) => unit
+  , route: string => (req => response) => unit
   }
 
 
