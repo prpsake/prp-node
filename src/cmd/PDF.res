@@ -91,7 +91,7 @@ module PDF: PDF = {
           let url = buildUrl(args.hostname, args.hostpathname, server.port)
 
           if Validator.isStringNotEmpty(dataFilePath) {
-            server.route(
+            server.route(.
               "GET " ++ joinPath([ args.hostpathname, "data" ]),
               _ => 
               Server.respond.fromFile(. 
@@ -102,7 +102,7 @@ module PDF: PDF = {
             )
           }
 
-          server.route(
+          server.route(.
             "GET " ++ args.hostpathname,
             _ =>
             Server.respond.fromFile(. 
@@ -112,7 +112,7 @@ module PDF: PDF = {
             )
           )
 
-          server.route(
+          server.route(.
             "GET *",
             req =>
             Server.respond.fromFile(. 
@@ -213,8 +213,8 @@ module PDF: PDF = {
       )
 
       ->catch(
-        e => {
-          Js.log(e)
+        _ => {
+          //Js.log(e)
           resolve(
             Log
             .logDefault

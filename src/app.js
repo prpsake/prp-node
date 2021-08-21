@@ -15,20 +15,19 @@ const command = { pdf: PDF.pdf }
 // https://nodejs.org/api/process.html#process_exit_codes
 ;(async () => {
   const args = cli()
-
-  console.log(args)
   
-  // try {
-  //   const output = await command[args._[0]](args)
-  //   console.log(output)
-  //   process.exit(0)
+  try {
+    const output = await command[args._[0]](args)
+    console.log(output)
+    process.exit(0)
 
-  // } catch(e) {
-  //   logDefault
-  //   .replace('cmd', args._[0])
-  //   .replace('msg', e.message.replace('args._[0]', args._[0]))
-  //   .replace('color', logColor("red"))
-  //   .log()
-  //   process.exit(1)
-  // }
+  } catch(e) {
+    logDefault
+    .replace('cmd', args._[0])
+    .replace('msg', e.message.replace('args._[0]', args._[0]))
+    .replace('color', logColor("red"))
+    .log()
+
+    process.exit(1)
+  }
 })()

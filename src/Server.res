@@ -43,7 +43,7 @@ type req = { url: string }
 type server = 
   {
     port: int
-  , route: string => (req => response) => unit
+  , route: (. string, req => response) => unit
   }
 
 
