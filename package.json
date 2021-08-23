@@ -27,15 +27,16 @@
   },
   "devDependencies": {
     "ava": "4.0.0-alpha.2",
+    "c8": "^7.8.0",
     "execa": "^5.1.1",
     "gentype": "^4.1.0",
-    "nyc": "^15.1.0",
     "pkg": "^5.3.1",
     "rescript": "^9.1.4",
     "sinon": "^11.1.2"
   },
   "scripts": {
-    "test": "ava src/Log.spec.js",
+    "test": "ava",
+    "cov": "c8 -c c8.config.json --reporter=text ava",
     "build": "pkg . && node post-build",
     "re:start": "rescript build -w",
     "re:build": "rescript"

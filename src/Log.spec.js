@@ -13,8 +13,14 @@ const timeStub =
 
 
 
+const consoleStub =
+  x =>
+  sinon.stub(console, 'log').returns(x)
+
+
+
 test(
-`Log, #logColor
+`#logColor
   Return ANSI escape code by name.`,
 
   t => {
@@ -38,7 +44,7 @@ test(
 
 
 test(
-`Log, #log.concat
+`#log.concat
   #concat one #log with another and return new #log holding
   their concatenated values.`,
 
@@ -60,7 +66,7 @@ test(
 
 
 test(
-`Log, #log.replace
+`#log.replace
   Substitute a placeholder by name.`,
   
   t => {
@@ -79,7 +85,7 @@ test(
 
 
 test(
-`Log, #log.time
+`#log.time
   Substitute time placeholder with crooks datetime.`,
   
   t => {
@@ -102,7 +108,33 @@ test(
 
 
 test(
-`Log, #parseDefault
+`#log.log
+  Print current value with datetime to the console`,
+  
+  t => {
+    //s
+    const time = timeStub('foifidrüäzwäng')
+    const stdout = consoleStub(`sischetz ${time()}`)
+    const value = stdout()
+    const valueVar = 'sischetz %time'
+
+    //e
+    const result = Log.log(valueVar).log().val
+
+    //v
+    t.is(result, value)
+
+    //td
+    time.restore()
+    stdout.restore()
+  }
+)
+  
+
+
+
+test(
+`#parseDefault
   Join log segments with #delimiter, then #parseDefault 
   and return record of type #segments #Default.`,
 

@@ -213,16 +213,32 @@ module PDF: PDF = {
       )
 
       ->catch(
-        _ => {
-          //Js.log(e)
-          resolve(
+        e => {
+          let logError = 
             Log
             .logDefault
             .replace(. "cmd", "pdf")
-            .replace(. "msg", "failed")
             .replace(. "color", Log.logColor(#red))
-            .time(.).val
-          )
+            .time(.)
+          
+          switch e {
+          | JsError(obj) =>
+            switch Js.Exn.message(obj) {
+            | Some(msg) =>
+              logError
+              .replace(. "msg", "failed : " ++ msg)
+              .val
+            | None =>
+              logError
+              .replace(. "msg", "failed : no message available (probably no js error value).")
+              .val
+            }
+          // QUESTION: Custom errors? If so, match here.
+          | _ =>
+            logError
+            .replace(. "msg", "failed : unknown error.")
+            .val
+          }->resolve
         }
       )
 

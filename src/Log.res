@@ -5,7 +5,7 @@ type rec log =
     concat: log => log
   , replace: (. string, string) => log
   , time: (. unit) => log
-  , log: unit => unit
+  , log: unit => log
   , val: string
   }
 
@@ -46,7 +46,11 @@ let rec log: string => log =
     concat: other => log(val ++ other.val),
     replace: (. old, new) => log(Js.String2.replace(val, j`%$old`, new)),
     time: (.) => log(val).replace(. "time", Js.Date.toISOString(Js.Date.make())),
-    log: () => Js.log(log(val).time(.).val),
+    log: () => {
+      let stdout = log(val).time(.).val
+      Js.log(stdout)
+      log(stdout)
+    },
     val
   }
 
