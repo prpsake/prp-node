@@ -11,16 +11,6 @@ type rec log =
 
 
 
-type colors = 
-  [ 
-    #green
-  | #red
-  | #dim
-  | #reset
-  ]
-
-
-
 type segments =
   | Default(
       {

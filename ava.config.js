@@ -1,6 +1,3 @@
 export default {
-  verbose: true,
-  require: [
-    'esm',
-  ]
-};
+  verbose: true
+}

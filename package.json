@@ -26,8 +26,7 @@
     "yargs": "^17.0.1"
   },
   "devDependencies": {
-    "ava": "^3.15.0",
-    "esm": "^3.2.25",
+    "ava": "4.0.0-alpha.2",
     "execa": "^5.1.1",
     "gentype": "^4.1.0",
     "nyc": "^15.1.0",
