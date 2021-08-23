@@ -36,7 +36,7 @@
     "sinon": "^11.1.2"
   },
   "scripts": {
-    "test": "ava src/app.spec.js",
+    "test": "ava src/Log.spec.js",
     "build": "pkg . && node post-build",
     "re:start": "rescript build -w",
     "re:build": "rescript"

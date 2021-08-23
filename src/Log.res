@@ -1,22 +1,39 @@
 /* Log */
 
 type rec log =
-  {
-    concat: log => log,
-    replace: (. string, string) => log,
-    time: (. unit) => log,
-    log: unit => unit,
-    val: string
+  { 
+    concat: log => log
+  , replace: (. string, string) => log
+  , time: (. unit) => log
+  , log: unit => unit
+  , val: string
   }
 
 
 
 type colors = 
-  [ #green
+  [ 
+    #green
   | #red
   | #dim
   | #reset
   ]
+
+
+
+type segments =
+  | Default(
+      {
+        org: string
+      , time: string
+      , ctx: string
+      , msg: string
+      }
+    )
+
+
+
+let delimiter = " :: " 
 
 
 
@@ -45,10 +62,24 @@ let rec log: string => log =
 
 
 
+let parseDefault: string => segments =
+  string => {
+    let segments = Js.String2.split(string, delimiter)
+    Default({
+      org: segments[0]
+    , time: segments[1]
+    , ctx: segments[2]
+    , msg: segments[3]
+    })
+  }
+
+
+
 let logDefault: log = 
   log(
-    Js.Array.joinWith(" : ",
-      [ `PRP${logColor(#dim)} %time`
+    Js.Array.joinWith(delimiter,
+      [ `PRP`
+      , `${logColor(#dim)}%time`
       , `${logColor(#reset)}prp-node %cmd`
       , `%color%msg${logColor(#reset)}`
       ]
