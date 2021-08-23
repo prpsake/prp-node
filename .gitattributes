@@ -1,1 +1,12 @@
+# config
+
+*.config.js -linguist-detectable
+*.config.json -linguist-detectable
+bsconfig.js -linguist-detectable
+post-build.js -linguist-detectable
+
+
+
+# tests
+
 *.spec.js -linguist-detectable
