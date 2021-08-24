@@ -337,6 +337,7 @@ test(
 )
 
 
+
 /* #throwOnStringEmpty */
 
 test(
@@ -362,5 +363,5 @@ test(
   Return the same.`,
 
   t =>
-  t.is(Validator.throwOnStringEmpty('', ' '), ' ')
+  t.is(Validator.throwOnStringEmpty('message', 'value'), 'value')
 )
