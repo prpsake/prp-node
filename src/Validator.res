@@ -43,35 +43,42 @@ let isStringEmpty: string => bool = x => x === ""
 
 
 let isStringNotEmpty: string => bool =
-   x => 
+   x =>
    Js.typeof(x) === "string" &&
    Js.String2.length(x) > 0
   
 
 
-let coerceString: option<string> => string = 
+let coerceString: Js.Nullable.t<string> => string = 
   x =>
-  switch x {
-  | Some(x) => j`$x`
+  switch Js.Nullable.toOption(x) {
+  | Some(x) =>
+    switch Js.typeof(x) {
+    | "string" => x
+    | _ => ""
+    }
   | None => ""
   }
 
 
 
-let coerceBool: option<bool> => bool =
+let coerceBool: Js.Nullable.t<bool> => bool =
   x =>
-  switch x {
-  | Some(_) => true
+  switch Js.Nullable.toOption(x) {
+  | Some(x) =>
+    switch Js.typeof(x) {
+    | "boolean" => x
+    | _ => false
+    }
   | None => false
   }
 
 
 
-let throwOnEmtpyString: string => string => string =
+let throwOnStringEmpty: string => string => string =
   msg =>
   x =>
-  if isStringNotEmpty(x) {
-    x
-  } else {
-    Js.Exn.raiseError(msg)
+  switch isStringNotEmpty(x) {
+  | true => x
+  | false => Js.Exn.raiseError(msg)
   }

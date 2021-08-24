@@ -1,7 +1,7 @@
 /* CLI */
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers'
-import { throwOnEmtpyString, coerceString, coerceBool } from './Validator.bs.js'
+import { throwOnStringEmpty, coerceString, coerceBool } from './Validator.bs.js'
 import { logDefault, logColor } from './Log.bs.js';
 
 
@@ -22,7 +22,7 @@ export default () =>
         describe: 'Absolute path to a template directory.',
         coerce: 
           arg => 
-          throwOnEmtpyString(
+          throwOnStringEmpty(
             logDefault
             .replace('cmd', 'pdf')
             .replace('msg', 'templatedir : Argument must not be empty.')

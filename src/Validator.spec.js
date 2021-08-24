@@ -61,139 +61,306 @@ test.serial(
 
 
 
+/* #isStringEmpty */
+
 test(
 `#isStringEmpty
-  Assert string and that it is empty.`,
+  Empty string is an empty string.`,
 
   t =>
-  t.assert(Validator.isStringEmpty(''))
+  t.true(Validator.isStringEmpty(''))
 )
 
 
 
 test(
 `#isStringEmpty
-  Assert string and that it is not empty.`,
+  Non-empty string is not an empty string.`,
 
   t => 
-  t.not(Validator.isStringEmpty(' '))
+  t.false(Validator.isStringEmpty(' '))
 )
 
 
 
 test(
 `#isStringEmpty
-  Assert that the value is not a string with type number.`,
+  Number is not an empty string.`,
 
   t =>
-  t.not(Validator.isStringEmpty(1))
+  t.false(Validator.isStringEmpty(0))
 )
 
 
 
 test(
 `#isStringEmpty
-  Assert that the value is not a string with type boolean (true).`,
+  True is not an empty string.`,
 
   t =>
-  t.not(Validator.isStringEmpty(true))
+  t.false(Validator.isStringEmpty(true))
 )
 
 
 
 test(
 `#isStringEmpty
-  Assert that the value is not a string with type boolean (false).`,
+  False is not an empty string.`,
 
   t =>
-  t.not(Validator.isStringEmpty(false))
+  t.false(Validator.isStringEmpty(false))
 )
 
 
 
 test(
 `#isStringEmpty
-  Assert that the value is not a string with undefined.`,
+  Undefined is not an empty string.`,
 
   t =>
-  t.not(Validator.isStringEmpty())
+  t.false(Validator.isStringEmpty(undefined))
 )
 
 
 
 test(
 `#isStringEmpty
-  Assert that the value is not a string with null.`,
+  Null is not an empty string.`,
 
   t =>
-  t.not(Validator.isStringEmpty(null))
+  t.false(Validator.isStringEmpty(null))
+)
+
+
+
+/* #isStringNotEmpty */
+
+test(
+`#isStringNotEmpty
+  Non-empty string is not an empty string.`,
+
+  t =>
+  t.true(Validator.isStringNotEmpty(' '))
 )
 
 
 
 test(
 `#isStringNotEmpty
-  Assert string and that it is not empty.`,
-
-  t =>
-  t.assert(Validator.isStringNotEmpty(' '))
-)
-
-
-
-test(
-`#isStringNotEmpty
-  Assert string and that it is empty.`,
+  Empty string is not a non-empty string.`,
 
   t => 
-  t.not(Validator.isStringNotEmpty(''))
+  t.false(Validator.isStringNotEmpty(''))
 )
 
 
 
 test(
 `#isStringNotEmpty
-  Assert that the value is not a string with type number.`,
+  Number is not a non-empty string.`,
 
   t =>
-  t.not(Validator.isStringNotEmpty(1))
+  t.false(Validator.isStringNotEmpty(0))
 )
 
 
 test(
 `#isStringNotEmpty
-  Assert that the value is not a string with type boolean (true).`,
+  True is not a non-empty string.`,
 
   t =>
-  t.not(Validator.isStringNotEmpty(true))
-)
-
-
-
-test(
-`#isStringNotEmpty
-  Assert that the value is not a string with type boolean (false).`,
-
-  t =>
-  t.not(Validator.isStringNotEmpty(false))
+  t.false(Validator.isStringNotEmpty(true))
 )
 
 
 
 test(
 `#isStringNotEmpty
-  Assert that the value is not a string with undefined.`,
+  False is not a non-empty string.`,
 
   t =>
-  t.not(Validator.isStringNotEmpty())
+  t.false(Validator.isStringNotEmpty(false))
 )
 
 
 
 test(
 `#isStringNotEmpty
-  Assert that the value is not a string with null.`,
+  Undefined is not a non-empty string.`,
 
   t =>
-  t.not(Validator.isStringNotEmpty(null))
+  t.false(Validator.isStringNotEmpty(undefined))
+)
+
+
+
+test(
+`#isStringNotEmpty
+  Null is not a non-empty string..`,
+
+  t =>
+  t.false(Validator.isStringNotEmpty(null))
+)
+
+
+
+/* #coerceString */
+
+test(
+`#coerceString
+  Empty string returns the same.`,
+
+  t =>
+  t.is(Validator.coerceString(''), '')
+)
+
+
+
+test(
+`#coerceString
+  Non-Empty string returns the same.`,
+
+  t =>
+  t.is(Validator.coerceString(' '), ' ')
+)
+
+
+
+test(
+`#coerceString
+  Number returns an empty string.`,
+
+  t =>
+  t.is(Validator.coerceString(0), '')
+)
+
+
+
+test(
+`#coerceString
+  True returns am empty string.`,
+
+  t =>
+  t.is(Validator.coerceString(true), '')
+)
+
+
+
+test(
+`#coerceString
+  False returns an empty string.`,
+
+  t =>
+  t.is(Validator.coerceString(false), '')
+)
+
+
+
+test(
+`#coerceString
+  Undefined returns an empty string.`,
+
+  t =>
+  t.is(Validator.coerceString(undefined), '')
+)
+
+
+
+test(
+`#coerceString
+  Null returns an empty string.`,
+
+  t =>
+  t.is(Validator.coerceString(null), '')
+)
+
+
+
+/* #coerceBoolean */
+
+test(
+`#coerceBoolean
+  True returns the same.`,
+
+  t =>
+  t.true(Validator.coerceBool(true))
+)
+
+
+
+test(
+`#coerceBoolean
+  False returns the same.`,
+
+  t =>
+  t.false(Validator.coerceBool(false))
+)
+
+
+
+test(
+`#coerceBoolean
+  String returns false.`,
+
+  t =>
+  t.false(Validator.coerceBool(''))
+)
+
+
+
+test(
+`#coerceBoolean
+  Number returns false.`,
+
+  t =>
+  t.false(Validator.coerceBool(1))
+)
+
+
+
+test(
+`#coerceBoolean
+  Undefined returns false.`,
+
+  t =>
+  t.false(Validator.coerceBool(undefined))
+)
+
+
+
+test(
+`#coerceBoolean
+  Null returns false.`,
+
+  t =>
+  t.false(Validator.coerceBool(undefined))
+)
+
+
+/* #throwOnStringEmpty */
+
+test(
+`#throwOnStringEmpty
+  Throw on empty string.`,
+
+  t => {
+    //s
+    const message = 'emptiness'
+
+    //e
+    const result =  t.throws(() => Validator.throwOnStringEmpty(message, ''), { instanceOf: Error})
+
+    //v
+    t.is(result.message, message)
+  }
+)
+
+
+
+test(
+`#throwOnStringEmpty
+  Return the same.`,
+
+  t =>
+  t.is(Validator.throwOnStringEmpty('', ' '), ' ')
 )
