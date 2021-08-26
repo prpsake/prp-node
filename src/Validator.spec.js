@@ -11,7 +11,7 @@ const openFileStub =
   x =>
   sinon.stub(fs, 'open').returns(x)
 
-
+  
 
 test.serial(
 `#pathsExist

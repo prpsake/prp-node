@@ -38,39 +38,34 @@ let pathsExist = {
 
 
 
-let isStringEmpty: string => bool = x => x === ""
+let isStringEmpty: string => bool = 
+  x =>
+  Js.Types.test(x, String) && 
+  Js.String2.length(x) === 0
 
 
 
 let isStringNotEmpty: string => bool =
-   x =>
-   Js.typeof(x) === "string" &&
-   Js.String2.length(x) > 0
-  
-
-
-let coerceString: Js.Nullable.t<string> => string = 
   x =>
-  switch Js.Nullable.toOption(x) {
-  | Some(x) =>
-    switch Js.typeof(x) {
-    | "string" => x
-    | _ => ""
-    }
-  | None => ""
+  Js.Types.test(x, String) && 
+  Js.String2.length(x) > 0
+
+
+
+let coerceString: string => string = 
+  x =>
+  switch Js.Types.classify(x) {
+  | JSString(x) => x
+  | _ =>  ""
   }
 
 
 
-let coerceBool: Js.Nullable.t<bool> => bool =
+let coerceBool: bool => bool =
   x =>
-  switch Js.Nullable.toOption(x) {
-  | Some(x) =>
-    switch Js.typeof(x) {
-    | "boolean" => x
-    | _ => false
-    }
-  | None => false
+  switch Js.Types.classify(x) {
+  | JSTrue => true
+  | _ => false
   }
 
 
