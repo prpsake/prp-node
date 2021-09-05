@@ -42,10 +42,10 @@ export default () =>
         type: 'string',
         demandOption: true,
         alias: 'o',
-        describe: 'Absolute path to a output directory.',
+        describe: 'Absolute path to an output directory.',
         coerce: 
           arg => 
-          throwOnEmtpyString(
+          throwOnStringEmpty(
             logDefault
             .replace('cmd', 'pdf')
             .replace('msg', 'outputdir : Argument must not be empty.')
