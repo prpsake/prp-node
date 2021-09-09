@@ -2,7 +2,7 @@ import test from 'ava'
 import sinon from 'sinon'
 
 
-import { chromium } from "playwright";
+import { chromium } from 'playwright'
 import * as Browser from './Browser.bs.js'
 
 
@@ -13,7 +13,7 @@ const launchStub =
 
 
 
-test(
+test.serial(
 `#launch
   Launch chromium browser.`,
   
@@ -27,5 +27,8 @@ test(
   
       //v
       t.is(result, value)
+
+      //td
+      browser.restore()
     }
   )
