@@ -17,18 +17,18 @@ test.serial(
 `#launch
   Launch server.`,
   
-    async t => {
-      //s
-      const server = launchStub('value')
-      const value = server()
+  async t => {
+    //s
+    const server = launchStub('value')
+    const value = server()
 
-      //e
-      const result = await Server.launch()
-  
-      //v
-      t.is(result, value)
+    //e
+    const result = await Server.launch()
 
-      //td
-      server.restore()
-    }
-  )
+    //v
+    t.is(result, value)
+
+    //td
+    server.restore()
+  }
+)

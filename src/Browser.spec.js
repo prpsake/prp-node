@@ -17,18 +17,18 @@ test.serial(
 `#launch
   Launch chromium browser.`,
   
-    async t => {
-      //s
-      const browser = launchStub('value')
-      const value = browser()
+  async t => {
+    //s
+    const browser = launchStub('value')
+    const value = browser()
 
-      //e
-      const result = await Browser.launch()
-  
-      //v
-      t.is(result, value)
+    //e
+    const result = await Browser.launch()
 
-      //td
-      browser.restore()
-    }
-  )
+    //v
+    t.is(result, value)
+
+    //td
+    browser.restore()
+  }
+)
