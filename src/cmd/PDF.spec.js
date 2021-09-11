@@ -1,9 +1,7 @@
 import test from 'ava'
-import sinon from 'sinon'
 
 
 import { delimiter } from '../Log.bs.js'
-//import * as Validator from '../Validator.bs.js'
 import { PDF } from './PDF.bs.js'
 
 

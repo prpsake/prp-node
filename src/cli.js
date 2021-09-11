@@ -6,8 +6,8 @@ import { logDefault, logColor } from './Log.bs.js';
 
 
 
-export default () =>
-  yargs(hideBin(process.argv))
+export default args =>
+  yargs(hideBin([...process.argv, args]))
   .scriptName('prp-node')
   .usage('$0 <cmd> [args]')
   .showHelpOnFail(false, "use --help for available options")

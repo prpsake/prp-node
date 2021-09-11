@@ -300,10 +300,10 @@ test(
 
 test(
 `#coerceBoolean
-  String returns false.`,
+  String returns true.`,
 
   t =>
-  t.false(Validator.coerceBool(''))
+  t.true(Validator.coerceBool(''))
 )
 
 

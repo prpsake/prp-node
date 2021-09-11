@@ -7,7 +7,7 @@
   "author": "",
   "license": "ISC",
   "bin": {
-    "prp-node": "./src/app.js"
+    "prp-node": "./src/PRPNode.js"
   },
   "pkg": {
     "assets": [

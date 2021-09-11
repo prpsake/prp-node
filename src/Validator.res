@@ -65,6 +65,7 @@ let coerceBool: bool => bool =
   x =>
   switch Js.Types.classify(x) {
   | JSTrue => true
+  | JSString(_) => true
   | _ => false
   }
 
