@@ -33,7 +33,7 @@ test.serial(
       removeAnsiCodes(JSON.stringify(errorMsg))
       .split(delimiter)
     const result = [ ctx, cmd, msg ].join(delimiter)
-
+        
     //v
     t.is(result, value)
   }

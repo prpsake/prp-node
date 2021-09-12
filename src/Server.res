@@ -49,7 +49,7 @@ type server =
 
 
 @module("minikin")
-@scope(("default", "default")) 
+@scope(("default", "default"))
 external server
 : unit => Promise.t<server> = "server"
 
