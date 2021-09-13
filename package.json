@@ -4,7 +4,7 @@
   "description": "",
   "type": "module",
   "author": "gourmetseasoningsake",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "prp": {
     "esmInput": "src/index.js",
     "esmOutput": "dist/PRPNode.esm.js",
