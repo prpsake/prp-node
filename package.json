@@ -3,9 +3,14 @@
   "version": "0.1.0",
   "description": "",
   "type": "module",
-  "module": "build/PRPNode.esm.js",
-  "author": "",
+  "author": "gourmetseasoningsake",
   "license": "ISC",
+  "prp": {
+    "esmInput": "src/index.js",
+    "esmOutput": "dist/PRPNode.esm.js",
+    "binInput": ".",
+    "binOutput": "dist/prp-node-x86_64-apple-darwin"
+  },
   "dependencies": {
     "@ryyppy/rescript-promise": "^2.1.0",
     "fs-extra": "^10.0.0",
@@ -26,7 +31,8 @@
     "test": "ava",
     "cov": "c8 -c c8.config.json --reporter=text ava",
     "bundle": "rollup -c",
-    "build": "node caxa.config.js",
+    "build": "node --experimental-json-modules build.js",
+    "dist": "npm run bundle && npm run build",
     "re:start": "rescript build -w",
     "re:build": "rescript"
   }

@@ -1,15 +1,16 @@
 import caxa from 'caxa'
+import pkg from './package.json'
 
 
 
 (async () => {
   
   await caxa.default({
-    input: ".",
-    output: "dist/prp-node-x86_64-apple-darwin",
+    input: pkg.prp.binInput,
+    output: pkg.prp.binOutput,
     command: [
       "{{caxa}}/node_modules/.bin/node",
-      "{{caxa}}/build/PRPNode.esm.js",
+      `{{caxa}}/${pkg.prp.esmOutput}`,
       // args...
     ]
   })
