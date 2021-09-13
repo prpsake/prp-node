@@ -3,6 +3,7 @@
 *.config.js -linguist-detectable
 *.config.json -linguist-detectable
 bsconfig.js -linguist-detectable
+build.js -linguist-detectable
 
 
 
