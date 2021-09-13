@@ -32,7 +32,7 @@
     "cov": "c8 -c c8.config.json --reporter=text ava",
     "bundle": "rollup -c",
     "build": "node --experimental-json-modules build.js",
-    "dist": "npm run bundle && npm run build",
+    "dist": "npm run re:build && npm run bundle && npm run build",
     "re:start": "rescript build -w",
     "re:build": "rescript"
   }
