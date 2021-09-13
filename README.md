@@ -2,7 +2,7 @@
 
 _This Repo is still a wip._
 
-Macos(/Linux) excecutable based on NodeJS for use in a private productivity app, but can be used standalone. Currently it offers only one functionality, which is the creation of PDFs from websites. It makes use of [playwright](https://www.npmjs.com/package/playwright) for this purpose. If that's what you're looking for, better use playwright or [puppeteer](https://www.npmjs.com/package/puppeteer) directly.
+Macos(/Linux) excecutable based on NodeJS for use in a private productivity app, but can be used standalone. Currently it offers only one functionality, which is the creation of PDFs from websites. It makes use of [playwright](https://www.npmjs.com/package/playwright) for this purpose. If that's the only thing what you're looking for, better use playwright or [puppeteer](https://www.npmjs.com/package/puppeteer) directly.
 
 ## Install and build
 ```
