@@ -1,17 +1,19 @@
-/* App */
+/* Index */
+
+import { fileURLToPath } from 'url'
 import { CLI } from './CLI.js'
 import { logDefault, logColor } from './Log.bs.js';
 import { PDF } from './cmd/PDF.bs.js'
 
 
 
-/* Commands */
-
-const command = { pdf: PDF.pdf }
-
-
-
 /* Helpers */
+
+const isRunningFromCLI = 
+  process.argv[1] === 
+  fileURLToPath(import.meta.url).replace('/private', '')
+
+
 
 const arrayFromObject =
   obj =>
@@ -25,53 +27,65 @@ const omitProp =
 
 
 
-/* App */
+/* Commands */
 
-// QUESTION: work with exit codes
-// https://nodejs.org/api/process.html#process_exit_codes
+const command = { pdf: PDF.pdf }
+
+
+
+/* ESMv */
+
 export const PRPNode = 
-  async (args_, mode = 'import') =>
+  async args_ =>
   {
-    let args = {}
-
-    if (mode === 'import' && command[args_.command]) {
-      args = CLI([
-        args_.command, 
-        ...arrayFromObject( omitProp(args_, 'command') )
-      ])
-
-    } else if (mode === 'cli') {
-      args = CLI(args_)
-    }
+    const args = CLI([
+      args_.command, 
+      ...arrayFromObject( omitProp(args_, 'command') )
+    ])
 
     try {
       const output = await command[args._[0]](args)
-
-      if (mode === 'import') {
-        return output
-
-      } else if ( mode === 'cli' ) {
-        console.log(output)
-        process.exit(0)
-      }
+      return output
   
-    } catch(e) {
+    } catch (e) {
       const error = 
         logDefault
         .replace('cmd', args._[0])
         .replace('msg', e.message.replace('args._[0]', args._[0]))
         .replace('color', logColor('red'))
 
-      if (mode === 'import') {
-        return error.val
-
-      } else if (mode === 'cli') {
-        error.log()
-        process.exit(1)
-      }
+      return error.val
     }
   }
 
 
 
-PRPNode(process.argv, 'cli')
+/* CLIv */
+
+const PRPNodeCLI = 
+  async args_ =>
+  {
+    const args = CLI(args_)
+
+    try {
+      const output = await command[args._[0]](args)
+      console.log(output)
+      process.exit(0)
+  
+    } catch (e) {
+      const error = 
+        logDefault
+        .replace('cmd', args._[0])
+        .replace('msg', e.message.replace('args._[0]', args._[0]))
+        .replace('color', logColor('red'))
+
+      error.log()
+      process.exit(1)
+    }
+  }
+
+
+
+if (isRunningFromCLI) {
+  PRPNodeCLI(process.argv)
+}
