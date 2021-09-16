@@ -1,10 +1,19 @@
 {
   "name": "prp-node",
   "version": "0.1.0",
-  "description": "",
-  "type": "module",
+  "description": "Creates a PDF from a local html page.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prpsake/prp-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/prpsake/prp-node/issues"
+  },
+  "homepage": "https://github.com/prpsake/prp-node#readme",
   "author": "gourmetseasoningsake",
   "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
   "prp": {
     "esmInput": "src/index.js",
     "esmOutput": "dist/PRPNode.esm.js",
