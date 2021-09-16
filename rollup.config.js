@@ -11,7 +11,7 @@ export default {
     }
   ],
 
-  plugins: [ nodeResolve({ extensions: ['.js' ] }) ],
+  plugins: [ nodeResolve({ extensions: ['.js'] }) ],
   external: [
     'minikin',
     'playwright',
