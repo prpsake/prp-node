@@ -3,7 +3,7 @@ import sinon from 'sinon'
 
 
 import minikin from 'minikin'
-import * as Server from './Server.bs.js'
+import * as Server from './Server.mjs'
 
 
 
