@@ -8,7 +8,7 @@ If converting (hosted) HTML to PDF is the only thing you're looking for, it prob
 ## Install and build
 ```
 $ pnpm install
-$ pnpm dist
+$ pnpm build
 ```
 
 This outputs the binary file `prp-node` to the dist folder.
