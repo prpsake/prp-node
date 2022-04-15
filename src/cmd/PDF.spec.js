@@ -1,8 +1,8 @@
 import test from 'ava'
 
 
-import { delimiter } from '../Log.bs.js'
-import { PDF } from './PDF.bs.js'
+import { delimiter } from '../Log.mjs'
+import { PDF } from './PDF.mjs'
 
 
 

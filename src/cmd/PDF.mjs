@@ -4,7 +4,7 @@ import * as Log from "../Log.mjs";
 import * as Path from "path";
 import * as Server from "../Server.mjs";
 import * as Browser from "../Browser.mjs";
-import * as $$Promise from "@ryyppy/rescript-promise/src/Promise.bs.js";
+import * as $$Promise from "../Promise.mjs";
 import * as FsExtra from "fs-extra";
 import * as Validator from "../Validator.mjs";
 

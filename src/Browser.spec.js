@@ -3,7 +3,7 @@ import sinon from 'sinon'
 
 
 import { chromium } from 'playwright'
-import * as Browser from './Browser.bs.js'
+import * as Browser from './Browser.mjs'
 
 
 

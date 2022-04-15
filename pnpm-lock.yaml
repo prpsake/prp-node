@@ -2,7 +2,6 @@ lockfileVersion: 5.3
 
 specifiers:
   '@rollup/plugin-node-resolve': ^13.2.1
-  '@ryyppy/rescript-promise': ^2.1.0
   ava: 4.2.0
   c8: ^7.11.0
   caxa: ^2.1.0
@@ -15,7 +14,6 @@ specifiers:
   yargs: ^17.4.1
 
 dependencies:
-  '@ryyppy/rescript-promise': 2.1.0
   fs-extra: 10.0.1
   minikin: 1.0.36
   playwright: 1.21.0
@@ -88,10 +86,6 @@ packages:
       picomatch: 2.3.1
       rollup: 2.70.2
     dev: true
-
-  /@ryyppy/rescript-promise/2.1.0:
-    resolution: {integrity: sha512-+dW6msBrj2Lr2hbEMX+HoWCvN89qVjl94RwbYWJgHQuj8jm/izdPC0YzxgpGoEFdeAEW2sOozoLcYHxT6o5WXQ==}
-    dev: false
 
   /@sinonjs/commons/1.8.3:
     resolution: {integrity: sha512-xkNcLAn/wZaX14RPlwizcKicDk9G3F8m2nU3L7Ukm5zBgTwiT0wsoFAHx9Jq56fJA1z/7uKGtCRu16sOUCLIHQ==}

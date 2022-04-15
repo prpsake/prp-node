@@ -16,12 +16,9 @@
   "type": "module",
   "prp": {
     "esmInput": "src/index.js",
-    "esmOutput": "dist/PRPNode.esm.js",
-    "binInput": ".",
-    "binOutput": "dist/prp-node-x86_64-apple-darwin"
+    "esmOutput": "dist/PRPNode.esm.js"
   },
   "dependencies": {
-    "@ryyppy/rescript-promise": "^2.1.0",
     "fs-extra": "^10.0.1",
     "minikin": "^1.0.36",
     "playwright": "^1.21.0",
@@ -37,12 +34,12 @@
     "sinon": "^13.0.2"
   },
   "scripts": {
+    "dev:re": "rescript build -w",
     "test": "ava",
-    "cov": "c8 -c c8.config.json --reporter=text ava",
-    "bundle": "rollup -c",
-    "build": "caxa --no-dedupe --prepare-command \"pnpm prune --prod\" --input \".\" --output \"dist/prp-node\" -- \"{{caxa}}/node_modules/.bin/node\" \"{{caxa}}/dist/PRPNode.esm.js\"",
-    "dist": "pnpm re:build && pnpm bundle && pnpm build",
-    "re:start": "rescript build -w",
-    "re:build": "rescript"
+    "test:cov": "c8 -c c8.config.json --reporter=text ava",
+    "build:re": "rescript",
+    "build:js": "rollup -c",
+    "build:bin": "caxa --no-dedupe --prepare-command \"pnpm prune --prod\" --input \".\" --output \"dist/prp-node\" -- \"{{caxa}}/node_modules/.bin/node\" \"{{caxa}}/dist/PRPNode.esm.js\"",
+    "build": "rm -r dist && pnpm build:re && pnpm build:js && pnpm build:bin"
   }
 }

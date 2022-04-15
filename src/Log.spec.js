@@ -3,7 +3,7 @@ import sinon from 'sinon'
 
 
 
-import * as Log from './Log.bs.js'
+import * as Log from './Log.mjs'
 
 
 

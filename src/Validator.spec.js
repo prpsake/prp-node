@@ -3,7 +3,7 @@ import sinon from 'sinon'
 
 
 import { promises as fs } from 'fs';
-import * as Validator from './Validator.bs.js'
+import * as Validator from './Validator.mjs'
 
 
 
