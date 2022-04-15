@@ -1,8 +1,8 @@
 /* CLI */
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers'
-import { throwOnStringEmpty, coerceString, coerceBool } from './Validator.bs.js'
-import { logDefault, logColor } from './Log.bs.js';
+import { throwOnStringEmpty, coerceString, coerceBool } from './Validator.mjs'
+import { logDefault, logColor } from './Log.mjs';
 
 
 

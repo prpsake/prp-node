@@ -2,19 +2,20 @@
 
 _This repo is still a wip._
 
-Macos excecutable based on NodeJS for use in a private productivity app, but can be used standalone. Currently it offers only one functionality, which is the creation of PDFs off a local html file. It makes use of [playwright](https://www.npmjs.com/package/playwright) for this purpose. If that's the only thing you're looking for, better use playwright or [puppeteer](https://www.npmjs.com/package/puppeteer) directly.
+Macos excecutable based on NodeJS for use in a private productivity app, but can be used standalone. Currently it offers only one functionality, which is the creation of PDFs off a local html file. It makes use of [playwright](https://www.npmjs.com/package/playwright) for this purpose.
+If converting (hosted) HTML to PDF is the only thing you're looking for, it probably makes more sense to implement something of your own so as not to depend on this little piece of work.
 
 ## Install and build
 ```
-$ npm install
-$ npm run dist
+$ pnpm install
+$ pnpm dist
 ```
 
-This outputs the binary file `prp-node-x86_64-apple-darwin` to the dist folder.
+This outputs the binary file `prp-node` to the dist folder.
 
 ## Usage
 ```
-$ ./dist/prp-node-x86_64-apple-darwin pdf --help
+$ ./dist/prp-node pdf --help
 prp-node pdf
 
 Create a pdf from a prp document template.
@@ -43,3 +44,7 @@ The help suggests that it is meant to operate on a prp document template.
 You can ignore this as it basically works on any webpage Chromium is able to render.
 
 The only important thing besides what's shown in the help text: An `index.html` file is expected to be the entry file in the template directory.
+
+## Notes
+
+- Smaller builds: https://github.com/pnpm/pnpm/issues/881

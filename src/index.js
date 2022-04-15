@@ -2,8 +2,8 @@
 
 import { fileURLToPath } from 'url'
 import { CLI } from './CLI.js'
-import { logDefault, logColor } from './Log.bs.js';
-import { PDF } from './cmd/PDF.bs.js'
+import { logDefault, logColor } from './Log.mjs';
+import { PDF } from './cmd/PDF.mjs'
 
 
 
