@@ -1,13 +1,16 @@
+# compiled files
+
+src/**/*.mjs -linguist-detectable
+
+
 # config
 
 *.config.js -linguist-detectable
-*.config.mjs -linguist-detectable
-build.js -linguist-detectable
 *.config.json -linguist-detectable
+*.config.mjs -linguist-detectable
 bsconfig.json -linguist-detectable
 package.json -linguist-detectable
 package-lock.json -linguist-detectable
-
 
 
 # tests
